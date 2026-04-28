@@ -17,6 +17,7 @@ const config = {
 			"@/utils/*": "./src/lib/utils/*",
 			"@/themes/*": "./src/lib/themes/*",
 			"@/attachments/*": "./src/lib/attachments/*",
+			"@/db/*": "./src/lib/db/*",
 
 		}
 	}
