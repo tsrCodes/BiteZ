@@ -10,7 +10,14 @@ const config = {
 		adapter: adapter(),
 
 		alias: {
-			"@/*": "./src/lib/*"
+			"@/*": "./src/lib/*",
+			"@/types/*": "./src/lib/types/*",
+			"@/contexts/*": "./src/lib/contexts/*",
+			"@/components/*": "./src/lib/components/*",
+			"@/utils/*": "./src/lib/utils/*",
+			"@/themes/*": "./src/lib/themes/*",
+			"@/attachments/*": "./src/lib/attachments/*",
+
 		}
 	}
 };
