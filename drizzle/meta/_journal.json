@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1777396382698,
-      "tag": "0000_polite_mikhail_rasputin",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1777639529815,
-      "tag": "0001_bitter_mandroid",
+      "when": 1777659227787,
+      "tag": "0000_fancy_lenny_balinger",
       "breakpoints": true
     }
   ]

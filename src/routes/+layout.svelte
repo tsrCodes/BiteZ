@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import './layout.css';
-	import { Toaster } from '@/components/ui/sonner';
 	import NavigationProgress from '@/components/common/navigation-progress.svelte';
 	import CommandMenu from '@/components/common/command-menu.svelte';
 	import { LayoutState, setLayout } from '@/contexts/layout.svelte';
@@ -10,8 +9,14 @@
 	import { ShortcutRegistry, setShortcuts } from '@/contexts/shortcuts.svelte';
 	import ShortcutsHelpDialog from '@/components/common/shortcuts-help-dialog.svelte';
 	import type { LayoutData } from './$types';
+	import toast, { Toaster } from 'svelte-french-toast';
+
+	import { getFlash } from 'sveltekit-flash-message';
+	import { page } from '$app/state';
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
+
+	const flash = getFlash(page);
 
 	const layout = new LayoutState({
 		collapsible: 'icon',
@@ -48,6 +53,22 @@
 	});
 
 	$effect(() => {
+		if ($flash) {
+			if ($flash.type === 'success') {
+				toast.success($flash.message, {
+					duration: 5000,
+					position: 'top-right'
+				});
+			} else {
+				toast.error($flash.message, {
+					duration: 5000,
+					position: 'top-right'
+				});
+			}
+		}
+	});
+
+	$effect(() => {
 		return shortcuts.register([
 			{
 				key: 'k',
@@ -78,7 +99,7 @@
 	<title>BiteZ Admin</title>
 </svelte:head>
 
-<Toaster theme={theme.resolvedMode} />
+<Toaster />
 <NavigationProgress />
 <CommandMenu />
 <ShortcutsHelpDialog />

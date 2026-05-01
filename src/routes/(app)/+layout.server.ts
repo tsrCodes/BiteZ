@@ -20,9 +20,7 @@ export const load: LayoutServerLoad = async ({ locals }) => {
 	const defaultBranch = assignedBranch ?? activeBranches[0];
 
 	return {
-		currentUser: {
-			...locals.user
-		},
+		currentUser: locals.user,
 		branches: activeBranches.map((b) => ({
 			id: b.id,
 			name: b.name,

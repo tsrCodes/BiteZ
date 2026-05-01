@@ -1,17 +1,16 @@
-CREATE TYPE "public"."activity" AS ENUM('ENABLE', 'DISABLE');--> statement-breakpoint
 CREATE TYPE "public"."user_status" AS ENUM('ACTIVE', 'INACTIVE');--> statement-breakpoint
 CREATE TABLE "branches" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name" varchar(255) NOT NULL,
-	"email" varchar(255),
-	"phone" varchar(50),
+	"name" text NOT NULL,
+	"email" text,
+	"phone" text,
 	"latitude" numeric(10, 7),
 	"longitude" numeric(10, 7),
 	"zone" jsonb,
 	"address" text,
-	"city" varchar(100),
-	"state" varchar(100),
-	"zip_code" varchar(20),
+	"city" text,
+	"state" text,
+	"zip_code" text,
 	"status" "user_status" DEFAULT 'ACTIVE',
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
@@ -19,9 +18,11 @@ CREATE TABLE "branches" (
 --> statement-breakpoint
 CREATE TABLE "permissions" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name" varchar(100) NOT NULL,
-	"module" varchar(50),
+	"name" text NOT NULL,
+	"module" text,
 	"description" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "permissions_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
@@ -33,27 +34,36 @@ CREATE TABLE "role_permissions" (
 --> statement-breakpoint
 CREATE TABLE "roles" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name" varchar(50) NOT NULL,
+	"name" text NOT NULL,
 	"description" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
 	CONSTRAINT "roles_name_unique" UNIQUE("name")
 );
 --> statement-breakpoint
 CREATE TABLE "sessions" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"token" text NOT NULL,
 	"user_id" uuid NOT NULL,
 	"expires_at" timestamp NOT NULL,
-	"ip_address" varchar(45),
+	"revoked_at" timestamp,
+	"ip_address" text,
 	"user_agent" text,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	"updated_at" timestamp DEFAULT now() NOT NULL
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "sessions_token_unique" UNIQUE("token")
 );
 --> statement-breakpoint
 CREATE TABLE "settings" (
-	"key" varchar(255) PRIMARY KEY NOT NULL,
-	"value" text NOT NULL,
-	"group" varchar(100) NOT NULL,
-	"type" varchar(50) DEFAULT 'text'
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"group" text NOT NULL,
+	"key" text NOT NULL,
+	"value" text,
+	"value_type" text DEFAULT 'string',
+	"description" text,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "settings_group_key_unique" UNIQUE("group","key")
 );
 --> statement-breakpoint
 CREATE TABLE "user_roles" (
@@ -64,15 +74,15 @@ CREATE TABLE "user_roles" (
 --> statement-breakpoint
 CREATE TABLE "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"name" varchar(255) NOT NULL,
-	"email" varchar(255) NOT NULL,
-	"is_email_verified" boolean DEFAULT false,
-	"is_phone_verified" boolean DEFAULT false,
+	"name" text NOT NULL,
+	"email" text NOT NULL,
+	"email_verified" boolean DEFAULT false,
+	"phone_verified" boolean DEFAULT false,
 	"is_guest" boolean DEFAULT false,
 	"image" text,
-	"username" varchar(255),
-	"password" varchar(255),
-	"phone" varchar(50),
+	"username" text,
+	"password" text,
+	"phone" text,
 	"branch_id" uuid,
 	"status" "user_status" DEFAULT 'ACTIVE',
 	"balance" numeric(19, 6) DEFAULT '0',
@@ -89,4 +99,5 @@ ALTER TABLE "role_permissions" ADD CONSTRAINT "role_permissions_role_id_roles_id
 ALTER TABLE "role_permissions" ADD CONSTRAINT "role_permissions_permission_id_permissions_id_fk" FOREIGN KEY ("permission_id") REFERENCES "public"."permissions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;
+ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "users" ADD CONSTRAINT "users_branch_id_branches_id_fk" FOREIGN KEY ("branch_id") REFERENCES "public"."branches"("id") ON DELETE set null ON UPDATE no action;

@@ -17,11 +17,14 @@ const PUBLIC_PATHS = [
 	'/reset-password',
 	'/terms',
 	'/privacy',
-	'/api/auth'
+	'/api/auth',
+	'/api/email-test'
 ];
 
 const authGuard: Handle = async ({ event, resolve }) => {
 	const session = await auth.api.getSession({ headers: event.request.headers });
+
+	console.log('session', session);
 
 	event.locals.user = (session?.user ?? null) as User | null;
 	event.locals.session = session?.session ?? null;

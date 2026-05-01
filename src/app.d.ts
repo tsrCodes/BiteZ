@@ -10,6 +10,9 @@ declare global {
 			session: Session | null;
 			user: User | null;
 		}
+		interface PageData {
+			flash?: { type: 'success' | 'error' | 'warning' | 'info'; message: string };
+		}
 	}
 }
 export {};

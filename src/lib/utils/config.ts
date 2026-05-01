@@ -1,4 +1,4 @@
-export const APP_NAME = 'Vortex';
+export const APP_NAME = 'BiteZ';
 
 export function pageTitle(title: string): string {
 	return `${title} | ${APP_NAME}`;

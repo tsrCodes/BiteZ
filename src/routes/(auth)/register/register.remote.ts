@@ -1,7 +1,7 @@
-import { form } from '$app/server';
+import { form, getRequestEvent } from '$app/server';
 import * as v from 'valibot';
 import { auth } from '@/server/auth';
-import { redirect } from '@sveltejs/kit';
+import { redirect } from 'sveltekit-flash-message/server';
 
 export const register = form(
 	v.pipe(
@@ -15,19 +15,28 @@ export const register = form(
 				v.regex(/[0-9]/, 'Password must contain at least one number'),
 				v.regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character')
 			),
-			confirmPassword: v.string()
+			confirmPassword: v.pipe(v.string(), v.minLength(1, 'Please confirm your password'))
 		}),
 		v.check((input) => input.password === input.confirmPassword, 'Passwords do not match')
 	),
 	async ({ name, email, password }) => {
+		const { cookies } = getRequestEvent();
 		const response = await auth.api.signUpEmail({
 			body: { name, email, password }
 		});
 
-		if (!response.token) {
+		if (!response.user) {
 			return { error: 'Registration failed' };
 		}
 
-		throw redirect(303, '/login');
+		redirect(
+			303,
+			'/login',
+			{
+				type: 'success',
+				message: 'Account created! A verification email has been sent to your inbox.'
+			},
+			cookies
+		);
 	}
 );

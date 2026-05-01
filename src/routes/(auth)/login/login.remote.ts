@@ -1,6 +1,8 @@
-import { form } from '$app/server';
+import { form, getRequestEvent } from '$app/server';
 import * as v from 'valibot';
 import { auth } from '@/server/auth';
+import { redirect } from 'sveltekit-flash-message/server';
+import type { APIError } from 'better-auth';
 
 export const login = form(
 	v.object({
@@ -9,6 +11,7 @@ export const login = form(
 		remember: v.optional(v.boolean(), false)
 	}),
 	async ({ email, password, remember }) => {
+		const { cookies } = getRequestEvent();
 		try {
 			await auth.api.signInEmail({
 				body: {
@@ -17,9 +20,19 @@ export const login = form(
 					rememberMe: remember
 				}
 			});
-			return { success: true };
-		} catch {
-			return { error: 'Invalid email or password' };
+
+			redirect(303, '/dashboard', { type: 'success', message: 'Login successful' }, cookies);
+		} catch (error: any) {
+			console.log(error);
+			redirect(
+				303,
+				'/login',
+				{
+					type: 'error',
+					message: error?.body?.message || 'Invalid email or password'
+				},
+				cookies
+			);
 		}
 	}
 );
