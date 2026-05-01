@@ -13,19 +13,35 @@
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
-
-
-	const layout = new LayoutState({ collapsible: data.sidebarCollapsible ?? 'icon', variant: data.sidebarVariant ?? 'inset' });
+	const layout = new LayoutState({
+		collapsible: 'icon',
+		variant: 'inset'
+	});
 	setLayout(layout);
 
 	const search = new SearchState();
 	setSearch(search);
 
-	const theme = new ThemeState({ preset: data.themePreset ?? 'default', font: data.font ?? 'inter', mode: data.colorMode ?? 'system' });
+	const theme = new ThemeState({
+		preset: 'default',
+		font: 'inter',
+		mode: 'system'
+	});
 	setTheme(theme);
 
 	const shortcuts = new ShortcutRegistry();
 	setShortcuts(shortcuts);
+
+	$effect(() => {
+		layout.setCollapsible(data.sidebarCollapsible ?? 'icon');
+		layout.setVariant(data.sidebarVariant ?? 'inset');
+	});
+
+	$effect(() => {
+		theme.setPreset(data.themePreset ?? 'default');
+		theme.setFont(data.font ?? 'inter');
+		theme.setMode(data.colorMode ?? 'system');
+	});
 
 	$effect(() => {
 		document.documentElement.classList.toggle('dark', theme.resolvedMode === 'dark');
@@ -33,9 +49,26 @@
 
 	$effect(() => {
 		return shortcuts.register([
-			{ key: 'k', modifiers: ['ctrl'], label: 'Command palette', action: () => search.toggle(), scope: 'global' },
-			{ key: 'd', modifiers: ['ctrl'], label: 'Toggle theme', action: () => theme.setMode(theme.resolvedMode === 'dark' ? 'light' : 'dark'), scope: 'global' },
-			{ key: '?', label: 'Show keyboard shortcuts', action: () => (shortcuts.helpOpen = true), scope: 'global' }
+			{
+				key: 'k',
+				modifiers: ['ctrl'],
+				label: 'Command palette',
+				action: () => search.toggle(),
+				scope: 'global'
+			},
+			{
+				key: 'd',
+				modifiers: ['ctrl'],
+				label: 'Toggle theme',
+				action: () => theme.setMode(theme.resolvedMode === 'dark' ? 'light' : 'dark'),
+				scope: 'global'
+			},
+			{
+				key: '?',
+				label: 'Show keyboard shortcuts',
+				action: () => (shortcuts.helpOpen = true),
+				scope: 'global'
+			}
 		]);
 	});
 </script>

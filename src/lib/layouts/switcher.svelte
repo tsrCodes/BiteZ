@@ -27,10 +27,12 @@
 				{#snippet child({ props })}
 					<Sidebar.MenuButton
 						size="lg"
-						class="data-[state=open]:bg-sidebar-accent border data-[state=open]:text-sidebar-accent-foreground"
+						class="border data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 						{...props}
 					>
-						<div class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
+						<div
+							class="flex aspect-square size-8 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground"
+						>
 							<Store class="size-4" />
 						</div>
 						<div class="grid flex-1 text-start text-sm leading-tight">
@@ -45,12 +47,12 @@
 				{/snippet}
 			</DropdownMenu.Trigger>
 			<DropdownMenu.Content
-				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-lg"
+				class="w-(--bits-dropdown-menu-anchor-width) min-w-56 rounded-xl"
 				align="start"
 				side={sidebar.isMobile ? 'bottom' : 'right'}
 				sideOffset={4}
 			>
-				<DropdownMenu.Label class="text-muted-foreground text-xs">Select Branch</DropdownMenu.Label>
+				<DropdownMenu.Label class="text-xs text-muted-foreground">Select Branch</DropdownMenu.Label>
 				{#each branches as branch, index (branch.id)}
 					<DropdownMenu.Item class="gap-2 p-2" onSelect={() => handleSelect(branch)}>
 						<div class="flex size-6 items-center justify-center rounded-sm border">

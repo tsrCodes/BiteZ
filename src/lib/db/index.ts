@@ -1,10 +1,12 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schemas';
+import { DATABASE_URL } from '$env/static/private';
 
-const connectionString = process.env.DATABASE_URL!;
+const connectionString = DATABASE_URL;
+
 if (!connectionString) {
-	throw new Error('DATABASE_URL is not set in environment variables');
+	console.log('DATABASE_URL present:', !!DATABASE_URL);
 }
 
 const client = postgres(connectionString, { max: 1 });

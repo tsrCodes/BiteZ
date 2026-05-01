@@ -20,8 +20,8 @@ export const users = pgTable('users', {
 	name: varchar('name', { length: 255 }).notNull(),
 	email: varchar('email', { length: 255 }).notNull().unique(),
 
-	isEmailVerified: boolean('is_email_verified').default(false),
-	isPhoneVerified: boolean('is_phone_verified').default(false),
+	emailVerified: boolean('email_verified').default(false),
+	phoneVerified: boolean('phone_verified').default(false),
 	isGuest: boolean('is_guest').default(false),
 
 	image: text('image'),

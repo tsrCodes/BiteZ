@@ -9,7 +9,6 @@
 	import { setAppData } from '@/contexts/app.svelte';
 	import { cn } from '@/utils';
 	import AppHeader from '@/layouts/app-header.svelte';
-	import TopNav from '@/layouts/top-nav.svelte';
 	import type { LayoutProps } from './$types';
 
 	let { data, children }: LayoutProps = $props();
@@ -22,18 +21,11 @@
 			return data.branches ?? [];
 		},
 		get activeBranch() {
-			return data.branches?.[0] ?? null;
+			return data.branches?.find((b) => b.id === data.activeBranchId) ?? data.branches?.[0] ?? null;
 		}
 	});
 
 	const layout = getLayout();
-
-	const topNav = $derived([
-		{ title: 'Orders', href: '/orders', isActive: true },
-		{ title: 'Customers', href: '/customers', isActive: false },
-		{ title: 'Catalog', href: '/catalog', isActive: false },
-		{ title: 'Settings', href: '/settings', isActive: false }
-	]);
 </script>
 
 <Sidebar.Provider open={data.sidebarOpen}>
