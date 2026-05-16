@@ -6,12 +6,12 @@ export function pageTitle(title: string): string {
 
 export const COOKIE = {
 	sidebarState: 'sidebar:state',
-	layoutCollapsible: 'layout_collapsible',
-	layoutVariant: 'layout_variant',
+	layoutCollapsible: 'layout:collapsible',
+	layoutVariant: 'layout:variant',
 	font: 'font',
-	themePreset: 'theme_preset',
-	colorMode: 'color_mode',
-	viewApps: 'view_apps',
+	themePreset: 'theme:preset',
+	colorMode: 'color:mode',
+	viewApps: 'view:apps',
 	panePrefix: 'pane:',
 	maxAge: {
 		long: 60 * 60 * 24 * 365,
@@ -33,7 +33,8 @@ export const COOKIE = {
 		themePreset: 'default',
 		colorMode: 'system' as const,
 		viewApps: 'grid' as const
-	}
+	},
+	activeBranch: 'active:branch'
 } as const;
 
 export const BREAKPOINT = { sm: 640, md: 768, lg: 1024 } as const;

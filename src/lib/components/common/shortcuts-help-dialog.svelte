@@ -52,7 +52,7 @@
 		<div class="max-h-[60vh] space-y-4 overflow-y-auto py-2">
 			{#each [...grouped] as [scope, shortcuts] (scope)}
 				<div>
-					<h3 class="text-muted-foreground mb-2 text-xs font-semibold tracking-wider uppercase">
+					<h3 class="mb-2 text-xs font-semibold tracking-wider text-muted-foreground uppercase">
 						{scopeLabel(scope)}
 					</h3>
 					<div class="space-y-1">

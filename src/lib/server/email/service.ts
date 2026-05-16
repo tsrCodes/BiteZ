@@ -1,4 +1,4 @@
-import { getTransporter, emailConfig } from './config';
+import { getTransporter, emailConfig, validateEmailConfig } from './config';
 import { renderEmail } from './renderer';
 import type {
 	VerificationEmailData,
@@ -11,6 +11,17 @@ import { APP_NAME, NODE_ENV } from '$env/static/private';
 import type { Component } from 'svelte';
 
 class EmailService {
+	constructor() {
+		try {
+			validateEmailConfig();
+			console.log('✅ Email configuration validated');
+		} catch (error) {
+			console.error('❌ Email configuration error:', error);
+			if (NODE_ENV === 'production') {
+				throw error;
+			}
+		}
+	}
 	private async sendMail(
 		to: string | string[],
 		subject: string,

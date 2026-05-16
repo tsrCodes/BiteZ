@@ -1,5 +1,7 @@
 import type { LayoutServerLoad } from './$types';
 import { COOKIE } from '@/utils/config';
+import { loadFlash } from 'sveltekit-flash-message/server';
+export const trailingSlash = 'always';
 
 function validate<T extends string>(
 	value: string | undefined,
@@ -9,7 +11,7 @@ function validate<T extends string>(
 	return allowed.includes(value as T) ? (value as T) : fallback;
 }
 
-export const load: LayoutServerLoad = ({ cookies }) => {
+export const load: LayoutServerLoad = loadFlash(({ cookies }) => {
 	return {
 		sidebarOpen: cookies.get(COOKIE.sidebarState) !== 'false',
 		sidebarCollapsible: validate(
@@ -39,4 +41,4 @@ export const load: LayoutServerLoad = ({ cookies }) => {
 			COOKIE.defaults.viewApps
 		)
 	};
-};
+});

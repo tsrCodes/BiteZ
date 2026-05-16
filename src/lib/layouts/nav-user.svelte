@@ -3,8 +3,10 @@
 	import * as DropdownMenu from '@/components/ui/dropdown-menu';
 	import { ChevronsUpDown, LogOut, Settings, User } from '@lucide/svelte/icons';
 	import type { User as UserType } from '@/types';
+	import SignOutDialog from './sign-out-dialog.svelte';
 
 	let { user }: { user: UserType } = $props();
+	let signOutOpen = $state(false);
 </script>
 
 <Sidebar.Menu>
@@ -56,10 +58,12 @@
 					<Settings /> Settings
 				</DropdownMenu.Item>
 				<DropdownMenu.Separator />
-				<DropdownMenu.Item class="text-destructive">
+				<DropdownMenu.Item class="text-destructive" onclick={() => (signOutOpen = true)}>
 					<LogOut /> Log out
 				</DropdownMenu.Item>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
 	</Sidebar.MenuItem>
 </Sidebar.Menu>
+
+<SignOutDialog bind:open={signOutOpen} />

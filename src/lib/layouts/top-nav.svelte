@@ -51,14 +51,14 @@
 <nav class={cn('hidden items-center gap-4 lg:flex xl:gap-6', className)}>
 	{#each links as link (link.title)}
 		{#if link.disabled}
-			<span class="text-muted-foreground text-sm font-medium">
+			<span class="text-sm font-medium text-muted-foreground">
 				{link.title}
 			</span>
 		{:else}
 			<a
 				href={link.href}
 				class={cn(
-					'hover:text-primary text-sm font-medium transition-colors',
+					'text-sm font-medium transition-colors hover:text-primary',
 					!link.isActive && 'text-muted-foreground'
 				)}
 			>

@@ -6,22 +6,39 @@
 	import SkipToMain from '@/layouts/skip-to-main.svelte';
 	import ScrollToTop from '@/components/common/scroll-to-top.svelte';
 	import { getLayout } from '@/contexts/layout.svelte';
-	import { setAppData } from '@/contexts/app.svelte';
+	import { setAppData, type AppData } from '@/contexts/app.svelte';
 	import { cn } from '@/utils';
 	import AppHeader from '@/layouts/app-header.svelte';
 	import type { LayoutProps } from './$types';
+	import { setBranch, type BranchContext } from '@/contexts/branch.svelte';
+	import { COOKIE } from '@/utils/config';
 
 	let { data, children }: LayoutProps = $props();
 
-	setAppData({
-		get currentUser() {
-			return data.currentUser;
-		},
-		get branches() {
-			return data.branches ?? [];
-		},
-		get activeBranch() {
-			return data.branches?.find((b) => b.id === data.activeBranchId) ?? data.branches?.[0] ?? null;
+	const branch: BranchContext = $state({ branches: [], activeBranch: null });
+
+	const app: AppData = $state({
+		currentUser: null,
+		branches: [],
+		activeBranch: undefined
+	});
+
+	setBranch(branch);
+	setAppData(app);
+
+	$effect(() => {
+		branch.branches = data.branches;
+		branch.activeBranch =
+			data.branches.find((b) => b.id === data.activeBranchId) ?? data.branches[0] ?? null;
+
+		app.currentUser = data.currentUser;
+		app.branches = data.branches;
+		app.activeBranch = branch.activeBranch ?? undefined;
+	});
+
+	$effect(() => {
+		if (branch.activeBranch) {
+			document.cookie = `${COOKIE.activeBranch}=${branch.activeBranch.id}; path=/; max-age=${COOKIE.maxAge.long}; SameSite=Lax`;
 		}
 	});
 

@@ -15,10 +15,8 @@
 <div
 	class="relative flex min-h-svh flex-col items-center justify-center lg:grid lg:max-w-none lg:grid-cols-2 lg:px-0"
 >
-	<!-- Left Column: Form -->
 	<div class="lg:p-8">
 		<div class="mx-auto flex w-full flex-col justify-center space-y-2 py-8 sm:w-[480px] sm:p-8">
-			<!-- Brand Header -->
 			<div class="mb-4 flex items-center justify-center">
 				<Zap class="me-2 size-6" />
 				<h1 class="text-xl font-medium">BiteZ</h1>
@@ -49,7 +47,7 @@
 						<div class="flex items-center justify-between">
 							<Label for={login.fields.password.as('password').name}>Password</Label>
 							<a
-								href={resolve('/forgot-password')}
+								href={resolve('/(auth)/forgot-password')}
 								class="text-xs text-muted-foreground underline-offset-4 hover:underline"
 							>
 								Forgot password?
@@ -67,10 +65,6 @@
 						{/each}
 					</div>
 
-					{#if login.result?.error}
-						<p class="text-center text-sm text-destructive">{login.result.error}</p>
-					{/if}
-
 					<Button type="submit" class="w-full rounded-xl" disabled={!!login.pending}>
 						{#if login.pending}Signing in...{:else}Sign In{/if}
 					</Button>
@@ -80,7 +74,7 @@
 			<Card.Footer>
 				<p class="px-8 text-center text-sm text-muted-foreground">
 					Don't have an account? <a
-						href={resolve('/register')}
+						href={resolve('/(auth)/register')}
 						class="underline underline-offset-4 hover:text-primary">Sign Up</a
 					>
 					<br />

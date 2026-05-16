@@ -48,12 +48,6 @@
 							{/each}
 						</div>
 
-						{#if forgotPassword.result?.success}
-							<p class="text-center text-sm text-green-600">
-								If an account exists with this email, a reset link has been sent.
-							</p>
-						{/if}
-
 						<Button type="submit" class="w-full rounded-xl" disabled={!!forgotPassword.pending}>
 							{#if forgotPassword.pending}Sending...{:else}Send reset link{/if}
 						</Button>
@@ -64,7 +58,7 @@
 					<p class="px-8 text-center text-sm text-muted-foreground">
 						Remember your password?
 						<a
-							href={resolve('/login')}
+							href={resolve('/(auth)/login')}
 							class="text-primary underline-offset-4 hover:underline"
 							data-sveltekit-preload-data="hover">Sign In</a
 						>

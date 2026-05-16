@@ -364,7 +364,7 @@
 		<div class="space-y-6 overflow-y-auto px-4">
 			<!-- Theme Mode -->
 			<div>
-				<div class="text-muted-foreground mb-2 text-sm font-semibold">Theme</div>
+				<div class="mb-2 text-sm font-semibold text-muted-foreground">Theme</div>
 				<div class="grid w-full max-w-md grid-cols-3 gap-4">
 					{#each themeOptions as option (option.value)}
 						{@const isSelected = theme.mode === option.value}
@@ -376,13 +376,13 @@
 						>
 							<div
 								class={cn(
-									'ring-border relative overflow-hidden rounded-md ring-1',
-									isSelected && 'ring-primary shadow-2xl'
+									'relative overflow-hidden rounded-md ring-1 ring-border',
+									isSelected && 'shadow-2xl ring-primary'
 								)}
 							>
 								{#if isSelected}
 									<CircleCheck
-										class="fill-primary stroke-primary-foreground absolute -top-0.5 -right-0.5 z-10 size-5"
+										class="absolute -top-0.5 -right-0.5 z-10 size-5 fill-primary stroke-primary-foreground"
 									/>
 								{/if}
 								{#if option.value === 'light'}
@@ -401,9 +401,7 @@
 
 			<!-- Sidebar Variant -->
 			<div class="max-md:hidden">
-				<div class="text-muted-foreground mb-2 text-sm font-semibold">
-					Sidebar
-				</div>
+				<div class="mb-2 text-sm font-semibold text-muted-foreground">Sidebar</div>
 				<div class="grid w-full max-w-md grid-cols-3 gap-4">
 					{#each variantOptions as option (option.value)}
 						{@const isSelected = layout.variant === option.value}
@@ -415,13 +413,13 @@
 						>
 							<div
 								class={cn(
-									'ring-border relative overflow-hidden rounded-md ring-1',
-									isSelected && 'ring-primary shadow-2xl'
+									'relative overflow-hidden rounded-md ring-1 ring-border',
+									isSelected && 'shadow-2xl ring-primary'
 								)}
 							>
 								{#if isSelected}
 									<CircleCheck
-										class="fill-primary stroke-primary-foreground absolute -top-0.5 -right-0.5 z-10 size-5"
+										class="absolute -top-0.5 -right-0.5 z-10 size-5 fill-primary stroke-primary-foreground"
 									/>
 								{/if}
 								{@render sidebarPreview(option.value)}
@@ -434,9 +432,7 @@
 
 			<!-- Layout Mode -->
 			<div class="max-md:hidden">
-				<div class="text-muted-foreground mb-2 text-sm font-semibold">
-					Layout
-				</div>
+				<div class="mb-2 text-sm font-semibold text-muted-foreground">Layout</div>
 				<div class="grid w-full max-w-md grid-cols-3 gap-4">
 					{#each layoutOptions as option (option.value)}
 						{@const isSelected = layoutRadioState === option.value}
@@ -448,13 +444,13 @@
 						>
 							<div
 								class={cn(
-									'ring-border relative overflow-hidden rounded-md ring-1',
-									isSelected && 'ring-primary shadow-2xl'
+									'relative overflow-hidden rounded-md ring-1 ring-border',
+									isSelected && 'shadow-2xl ring-primary'
 								)}
 							>
 								{#if isSelected}
 									<CircleCheck
-										class="fill-primary stroke-primary-foreground absolute -top-0.5 -right-0.5 z-10 size-5"
+										class="absolute -top-0.5 -right-0.5 z-10 size-5 fill-primary stroke-primary-foreground"
 									/>
 								{/if}
 								{@render layoutPreview(option.value)}
@@ -467,9 +463,7 @@
 
 			<!-- Color Preset -->
 			<div>
-				<div class="text-muted-foreground mb-2 text-sm font-semibold">
-					Color Preset
-				</div>
+				<div class="mb-2 text-sm font-semibold text-muted-foreground">Color Preset</div>
 				<div class="grid grid-cols-3 gap-2 sm:grid-cols-4">
 					{#each presets as preset (preset.name)}
 						<PresetSwatch
@@ -482,7 +476,11 @@
 			</div>
 		</div>
 		<Sheet.Footer class="gap-2">
-			<Button variant="destructive" onclick={handleReset} aria-label="Reset all settings to default values">
+			<Button
+				variant="destructive"
+				onclick={handleReset}
+				aria-label="Reset all settings to default values"
+			>
 				<RotateCcw class="size-4" />
 				Reset
 			</Button>

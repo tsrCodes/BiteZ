@@ -2,12 +2,14 @@
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Button } from '$lib/components/ui/button';
 	import { toast } from 'svelte-sonner';
-	import { auth } from '@/server/auth';
+	import { useSignOut } from '@/hooks/use-sign-out';
 
 	let { open = $bindable(false) }: { open: boolean } = $props();
 
+	const { signOut, isSigningOut } = useSignOut();
+
 	async function handleSignOut() {
-		await auth.api.signOut();
+		await signOut();
 		open = false;
 		toast('You have been successfully signed out of your account', {
 			description: 'You can sign in again at any time.'
@@ -23,7 +25,9 @@
 		</Dialog.Header>
 		<Dialog.Footer>
 			<Button variant="secondary" onclick={() => (open = false)}>Cancel</Button>
-			<Button variant="destructive" onclick={handleSignOut}>Sign Out</Button>
+			<Button variant="destructive" onclick={handleSignOut} disabled={isSigningOut}>
+				{#if isSigningOut}Signing out...{:else}Sign Out{/if}
+			</Button>
 		</Dialog.Footer>
 	</Dialog.Content>
 </Dialog.Root>

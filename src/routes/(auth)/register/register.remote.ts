@@ -1,7 +1,12 @@
 import { form, getRequestEvent } from '$app/server';
+import { isRedirect } from '@sveltejs/kit';
+
 import * as v from 'valibot';
-import { auth } from '@/server/auth';
+
 import { redirect } from 'sveltekit-flash-message/server';
+import { isAPIError } from 'better-auth/api';
+
+import { auth } from '@/server/auth';
 
 export const register = form(
 	v.pipe(
@@ -17,26 +22,64 @@ export const register = form(
 			),
 			confirmPassword: v.pipe(v.string(), v.minLength(1, 'Please confirm your password'))
 		}),
+
 		v.check((input) => input.password === input.confirmPassword, 'Passwords do not match')
 	),
+
 	async ({ name, email, password }) => {
-		const { cookies } = getRequestEvent();
-		const response = await auth.api.signUpEmail({
-			body: { name, email, password }
-		});
+		const { cookies, request } = getRequestEvent();
 
-		if (!response.user) {
-			return { error: 'Registration failed' };
+		try {
+			await auth.api.signUpEmail({
+				body: {
+					name,
+					email,
+					password
+				},
+
+				headers: request.headers
+			});
+
+			redirect(
+				303,
+				'/login',
+				{
+					id: 'register',
+					type: 'success',
+					message: 'Account created successfully. Please verify your email.'
+				},
+				cookies
+			);
+		} catch (error: unknown) {
+			if (isRedirect(error)) {
+				throw error;
+			}
+
+			if (isAPIError(error)) {
+				redirect(
+					303,
+					'/register',
+					{
+						id: 'register',
+						type: 'error',
+						message: error.message || 'Registration failed. Please try again.'
+					},
+					cookies
+				);
+			}
+
+			console.error('Registration Error:', error);
+
+			redirect(
+				303,
+				'/register',
+				{
+					id: 'register',
+					type: 'error',
+					message: 'Something went wrong. Please try again later.'
+				},
+				cookies
+			);
 		}
-
-		redirect(
-			303,
-			'/login',
-			{
-				type: 'success',
-				message: 'Account created! A verification email has been sent to your inbox.'
-			},
-			cookies
-		);
 	}
 );

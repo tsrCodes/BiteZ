@@ -20,7 +20,7 @@ export default defineConfig(
 	{
 		languageOptions: { globals: { ...globals.browser, ...globals.node } },
 		rules: {
-			"no-undef": 'off'
+			'no-undef': 'off'
 		}
 	},
 	{
@@ -35,13 +35,13 @@ export default defineConfig(
 		}
 	},
 	{
-		"svelte/no-navigation-without-resolve": [
-			"error",
+		'svelte/no-navigation-without-resolve': [
+			'error',
 			{
-				"ignoreGoto": false,
-				"ignoreLinks": false,
-				"ignorePushState": false,
-				"ignoreReplaceState": false
+				ignoreGoto: false,
+				ignoreLinks: false,
+				ignorePushState: false,
+				ignoreReplaceState: false
 			}
 		]
 	},

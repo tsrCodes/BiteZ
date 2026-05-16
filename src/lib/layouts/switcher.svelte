@@ -3,21 +3,11 @@
 	import * as DropdownMenu from '@/components/ui/dropdown-menu';
 	import { ChevronsUpDown, Store, MapPin } from '@lucide/svelte/icons';
 	import { isMac } from '@/utils';
-	import type { Branch } from '@/types/branch';
-	import { getAppData, setAppData } from '@/contexts/app.svelte';
+	import { getBranch } from '@/contexts/branch.svelte';
 
-	let { branches }: { branches: Branch[] } = $props();
-
-	const app = getAppData();
-
-	let activeBranch = $derived(app.activeBranch ?? branches[0]);
-
+	const branchCtx = getBranch();
 	const sidebar = Sidebar.useSidebar();
 	const modifierKey = $derived(isMac() ? '\u2318' : 'Ctrl+');
-
-	function handleSelect(branch: Branch) {
-		setAppData({ ...app, activeBranch: branch });
-	}
 </script>
 
 <Sidebar.Menu>
@@ -36,10 +26,14 @@
 							<Store class="size-4" />
 						</div>
 						<div class="grid flex-1 text-start text-sm leading-tight">
-							<span class="truncate font-semibold">{activeBranch.name}</span>
+							<span class="truncate font-semibold">
+								{branchCtx.activeBranch?.name ?? 'Select Branch'}
+							</span>
 							<div class="flex items-center gap-1 text-xs text-muted-foreground">
 								<MapPin class="size-3" />
-								<span>{activeBranch.location}</span>
+								<span>
+									{branchCtx.activeBranch?.city ?? branchCtx.activeBranch?.address ?? 'No location'}
+								</span>
 							</div>
 						</div>
 						<ChevronsUpDown class="ms-auto" />
@@ -53,14 +47,21 @@
 				sideOffset={4}
 			>
 				<DropdownMenu.Label class="text-xs text-muted-foreground">Select Branch</DropdownMenu.Label>
-				{#each branches as branch, index (branch.id)}
-					<DropdownMenu.Item class="gap-2 p-2" onSelect={() => handleSelect(branch)}>
+				{#each branchCtx.branches as branch, index (branch.id)}
+					<DropdownMenu.Item
+						class="gap-2 p-2"
+						onSelect={() => {
+							branchCtx.activeBranch = branch;
+						}}
+					>
 						<div class="flex size-6 items-center justify-center rounded-sm border">
 							<Store class="size-3 shrink-0" />
 						</div>
 						<div class="flex flex-col">
 							<span class="font-medium">{branch.name}</span>
-							<span class="text-xs text-muted-foreground">{branch.location}</span>
+							<span class="text-xs text-muted-foreground">
+								{branch.city ?? branch.address ?? 'No location'}
+							</span>
 						</div>
 						<DropdownMenu.Shortcut>{modifierKey}{index + 1}</DropdownMenu.Shortcut>
 					</DropdownMenu.Item>

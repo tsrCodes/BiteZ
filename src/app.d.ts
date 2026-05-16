@@ -1,4 +1,5 @@
 import type { User, Session } from '@/types';
+import type { Toast } from '@/utils/toast';
 
 declare global {
 	namespace App {
@@ -11,7 +12,7 @@ declare global {
 			user: User | null;
 		}
 		interface PageData {
-			flash?: { type: 'success' | 'error' | 'warning' | 'info'; message: string };
+			flash?: Toast;
 		}
 	}
 }

@@ -35,7 +35,7 @@
 								onSelect={() => runCommand(() => goto(resolve(navItem.url)))}
 							>
 								<div class="flex size-4 items-center justify-center">
-									<ArrowRight class="text-muted-foreground/80 size-2" />
+									<ArrowRight class="size-2 text-muted-foreground/80" />
 								</div>
 								{navItem.title}
 							</Command.Item>
@@ -46,7 +46,7 @@
 									onSelect={() => runCommand(() => goto(resolve(subItem.url)))}
 								>
 									<div class="flex size-4 items-center justify-center">
-										<ArrowRight class="text-muted-foreground/80 size-2" />
+										<ArrowRight class="size-2 text-muted-foreground/80" />
 									</div>
 									{navItem.title}
 									<ChevronRight class="size-3" />

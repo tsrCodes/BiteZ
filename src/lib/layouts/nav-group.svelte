@@ -5,7 +5,7 @@
 	import { Badge } from '@/components/ui/badge';
 	import ChevronRight from '@lucide/svelte/icons/chevron-right';
 	import type { NavItem, NavLink, NavCollapsible } from '@/types';
-    import { resolve } from '$app/paths'
+	import { resolve } from '$app/paths';
 
 	let { title, items }: { title: string; items: NavItem[] } = $props();
 
@@ -85,7 +85,11 @@
 							{#each navCollapsible.items as sub (`${sub.title}-${sub.url}`)}
 								<DropdownMenu.Item>
 									{#snippet child({ props })}
-										<a href={sub.url} class={checkIsActive(sub.url, sub) ? 'bg-secondary' : ''} {...props}>
+										<a
+											href={sub.url}
+											class={checkIsActive(sub.url, sub) ? 'bg-secondary' : ''}
+											{...props}
+										>
 											{#if sub.icon}
 												<sub.icon />
 											{/if}
@@ -123,7 +127,9 @@
 						{#if navCollapsible.badge}
 							{@render navBadge(navCollapsible.badge, false)}
 						{/if}
-						<ChevronRight class="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+						<ChevronRight
+							class="ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90"
+						/>
 					</Sidebar.MenuButton>
 					<Sidebar.MenuSub class="group-data-[state=closed]/collapsible:hidden">
 						{#each navCollapsible.items as subItem (subItem.title)}

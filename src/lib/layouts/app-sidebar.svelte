@@ -15,13 +15,13 @@
 		variant?: Variant;
 	} = $props();
 
-	const { currentUser, branches } = getAppData();
+	const { currentUser } = getAppData();
 </script>
 
 <nav aria-label="Main navigation">
 	<Sidebar.Root {collapsible} {variant}>
 		<Sidebar.Header>
-			<BranchSwitcher {branches} />
+			<BranchSwitcher />
 		</Sidebar.Header>
 		<Sidebar.Content>
 			{#each getNavGroups() as group (group.title)}
@@ -29,7 +29,7 @@
 			{/each}
 		</Sidebar.Content>
 		<Sidebar.Footer>
-			<NavUser user={currentUser} />
+			<NavUser user={currentUser!} />
 		</Sidebar.Footer>
 		<Sidebar.Rail />
 	</Sidebar.Root>

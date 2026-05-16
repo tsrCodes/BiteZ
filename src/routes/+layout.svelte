@@ -9,10 +9,20 @@
 	import { ShortcutRegistry, setShortcuts } from '@/contexts/shortcuts.svelte';
 	import ShortcutsHelpDialog from '@/components/common/shortcuts-help-dialog.svelte';
 	import type { LayoutData } from './$types';
-	import toast, { Toaster } from 'svelte-french-toast';
-
+	import { Toaster } from 'svelte-sonner';
+	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
+	import { browser } from '$app/environment';
 	import { getFlash } from 'sveltekit-flash-message';
 	import { page } from '$app/state';
+	import { toastHandlers } from '@/utils/toast';
+
+	const queryClient = new QueryClient({
+		defaultOptions: {
+			queries: {
+				enabled: browser
+			}
+		}
+	});
 
 	let { data, children }: { data: LayoutData; children: Snippet } = $props();
 
@@ -53,19 +63,13 @@
 	});
 
 	$effect(() => {
-		if ($flash) {
-			if ($flash.type === 'success') {
-				toast.success($flash.message, {
-					duration: 5000,
-					position: 'top-right'
-				});
-			} else {
-				toast.error($flash.message, {
-					duration: 5000,
-					position: 'top-right'
-				});
-			}
-		}
+		if (!$flash) return;
+
+		toastHandlers[$flash.type]?.($flash.message, {
+			id: $flash.id,
+			duration: 2500,
+			richColors: true
+		});
 	});
 
 	$effect(() => {
@@ -99,9 +103,10 @@
 	<title>BiteZ Admin</title>
 </svelte:head>
 
-<Toaster />
-<NavigationProgress />
-<CommandMenu />
-<ShortcutsHelpDialog />
-
-{@render children()}
+<QueryClientProvider client={queryClient}>
+	<Toaster richColors position="top-right" />
+	<NavigationProgress />
+	<CommandMenu />
+	<ShortcutsHelpDialog />
+	{@render children()}
+</QueryClientProvider>

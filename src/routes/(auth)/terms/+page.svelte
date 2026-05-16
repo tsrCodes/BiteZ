@@ -54,6 +54,6 @@
 	</div>
 
 	<div class="mt-8 border-t pt-6">
-		<a href={resolve('/login')} class="text-primary hover:underline">← Back to Sign In</a>
+		<a href={resolve('/(auth)/login')} class="text-primary hover:underline">← Back to Sign In</a>
 	</div>
 </div>

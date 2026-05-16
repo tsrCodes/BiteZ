@@ -9,11 +9,10 @@
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
 		{#snippet child({ props })}
-			<button 
-				class="flex items-center gap-2 rounded-full hover:bg-muted p-1"
-				{...props}
-			>
-				<div class="bg-primary text-primary-foreground flex size-8 items-center justify-center rounded-full">
+			<button class="flex items-center gap-2 rounded-full p-1 hover:bg-muted" {...props}>
+				<div
+					class="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground"
+				>
 					{user?.name?.charAt(0)}
 				</div>
 			</button>
@@ -22,8 +21,8 @@
 	<DropdownMenu.Content class="w-56" align="end">
 		<DropdownMenu.Label class="font-normal">
 			<div class="flex flex-col space-y-1">
-				<p class="text-sm font-medium leading-none">{user.name}</p>
-				<p class="text-muted-foreground text-xs leading-none">{user.email}</p>
+				<p class="text-sm leading-none font-medium">{user.name}</p>
+				<p class="text-xs leading-none text-muted-foreground">{user.email}</p>
 			</div>
 		</DropdownMenu.Label>
 		<DropdownMenu.Separator />

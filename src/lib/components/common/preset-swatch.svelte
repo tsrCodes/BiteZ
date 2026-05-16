@@ -21,8 +21,8 @@
 >
 	<div
 		class={cn(
-			'ring-border flex size-10 items-center justify-center rounded-lg ring-1 transition-shadow',
-			selected && 'ring-offset-background shadow-md ring-2 ring-offset-2'
+			'flex size-10 items-center justify-center rounded-lg ring-1 ring-border transition-shadow',
+			selected && 'shadow-md ring-2 ring-offset-2 ring-offset-background'
 		)}
 		style:background="linear-gradient(to right, {preset.primaryColor} 50%, {preset.secondaryColor} 50%)"
 		style:--tw-ring-color={selected ? preset.primaryColor : undefined}

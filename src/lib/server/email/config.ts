@@ -14,11 +14,30 @@ import {
 } from '$env/static/private';
 
 export function validateEmailConfig(): void {
-	const required = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USER', 'SMTP_PASS', 'EMAIL_FROM'];
-	const missing = required.filter((key) => !process.env[key]);
+	const config = {
+		SMTP_HOST,
+		SMTP_PORT,
+		SMTP_USER,
+		SMTP_PASS,
+		EMAIL_FROM
+	};
+
+	const missing = Object.entries(config)
+		.filter(([_, value]) => !value)
+		.map(([key]) => key);
 
 	if (missing.length > 0) {
 		throw new Error(`Missing email configuration: ${missing.join(', ')}`);
+	}
+}
+
+export async function verifyEmailConnection(): Promise<void> {
+	try {
+		const transporter = getTransporter();
+		await transporter.verify();
+		console.log('✅ SMTP connection verified successfully');
+	} catch (error) {
+		console.error('❌ SMTP connection failed:', error);
 	}
 }
 
@@ -58,19 +77,6 @@ export function getTransporter(): Transporter {
 				rejectUnauthorized: NODE_ENV === 'production'
 			}
 		} as nodemailer.TransportOptions);
-
-		if (NODE_ENV !== 'production') {
-			verifyConnection();
-		}
 	}
 	return transporterInstance;
-}
-
-async function verifyConnection(): Promise<void> {
-	try {
-		await transporterInstance!.verify();
-		console.log('✅ SMTP connection verified successfully');
-	} catch (error) {
-		console.error('❌ SMTP connection failed:', error);
-	}
 }

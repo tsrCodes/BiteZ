@@ -1,24 +1,24 @@
 <script lang="ts">
-	import { Command as CommandPrimitive } from "bits-ui";
-	import { cn } from "@/utils/index.js";
-	import * as InputGroup from "@/components/ui/input-group/index.js";
+	import { Command as CommandPrimitive } from 'bits-ui';
+	import { cn } from '@/utils/index.js';
+	import * as InputGroup from '@/components/ui/input-group/index.js';
 	import SearchIcon from '@lucide/svelte/icons/search';
 
 	let {
 		ref = $bindable(null),
 		class: className,
-		value = $bindable(""),
+		value = $bindable(''),
 		...restProps
 	}: CommandPrimitive.InputProps = $props();
 </script>
 
 <div data-slot="command-input-wrapper" class="p-1 pb-0">
-	<InputGroup.Root class="bg-input/50 h-9">
+	<InputGroup.Root class="h-9 bg-input/50">
 		<CommandPrimitive.Input
 			{value}
 			data-slot="command-input"
 			class={cn(
-				"w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+				'w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50',
 				className
 			)}
 			{...restProps}
