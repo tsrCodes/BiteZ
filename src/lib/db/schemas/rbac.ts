@@ -4,7 +4,7 @@ import {
 	timestamp,
 	uuid,
 	primaryKey,
-	type AnyPgColumn,
+	boolean,
 	foreignKey
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
@@ -14,6 +14,7 @@ export const roles = pgTable('roles', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	name: text('name').notNull().unique(),
 	description: text('description'),
+	isSystem: boolean('is_system').notNull().default(false),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at')
 		.defaultNow()
@@ -27,14 +28,10 @@ export const permissions = pgTable(
 		id: uuid('id').primaryKey().defaultRandom(),
 		name: text('name').notNull().unique(),
 		module: text('module'),
-
 		parentId: uuid('parent_id'),
-
 		action: text('action'),
 		description: text('description'),
-
 		createdAt: timestamp('created_at').defaultNow().notNull(),
-
 		updatedAt: timestamp('updated_at')
 			.defaultNow()
 			.$onUpdate(() => new Date())
@@ -75,19 +72,21 @@ export const userRoles = pgTable(
 	(t) => ({ pk: primaryKey({ columns: [t.userId, t.roleId] }) })
 );
 
-export const userRolesRelations = relations(userRoles, ({ one }) => ({
-	user: one(users, { fields: [userRoles.userId], references: [users.id] }),
-	role: one(roles, { fields: [userRoles.roleId], references: [roles.id] })
-}));
+// ─── Relations ───────────────────────────────────────────────────────────────
 
-// Relations
 export const rolesRelations = relations(roles, ({ many }) => ({
 	permissions: many(rolePermissions),
 	users: many(userRoles)
 }));
 
-export const permissionsRelations = relations(permissions, ({ many }) => ({
-	roles: many(rolePermissions)
+export const permissionsRelations = relations(permissions, ({ many, one }) => ({
+	roles: many(rolePermissions),
+	parent: one(permissions, {
+		fields: [permissions.parentId],
+		references: [permissions.id],
+		relationName: 'parent_child'
+	}),
+	children: many(permissions, { relationName: 'parent_child' })
 }));
 
 export const rolePermissionsRelations = relations(rolePermissions, ({ one }) => ({
@@ -97,3 +96,17 @@ export const rolePermissionsRelations = relations(rolePermissions, ({ one }) => 
 		references: [permissions.id]
 	})
 }));
+
+export const userRolesRelations = relations(userRoles, ({ one }) => ({
+	user: one(users, { fields: [userRoles.userId], references: [users.id] }),
+	role: one(roles, { fields: [userRoles.roleId], references: [roles.id] })
+}));
+
+// ─── Types ──────────────────────────────────────────────────────────────────
+
+export type Role = typeof roles.$inferSelect;
+export type RoleInsert = typeof roles.$inferInsert;
+export type Permission = typeof permissions.$inferSelect;
+export type PermissionInsert = typeof permissions.$inferInsert;
+export type RolePermission = typeof rolePermissions.$inferSelect;
+export type UserRole = typeof userRoles.$inferSelect;

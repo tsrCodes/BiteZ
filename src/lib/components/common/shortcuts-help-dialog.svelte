@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { SvelteMap } from 'svelte/reactivity';
-	import * as Dialog from '$lib/components/ui/dialog';
-	import * as Kbd from '$lib/components/ui/kbd';
-	import { getShortcuts } from '$lib/contexts/shortcuts.svelte';
-	import { isMac } from '$lib/utils';
+	import * as Dialog from '@/components/ui/dialog';
+	import * as Kbd from '@/components/ui/kbd';
+	import { getShortcuts } from '@/contexts/shortcuts.svelte';
+	import { isMac } from '@/utils';
 
 	const registry = getShortcuts();
 	const mac = isMac();

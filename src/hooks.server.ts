@@ -4,7 +4,6 @@ import { svelteKitHandler } from 'better-auth/svelte-kit';
 import { building } from '$app/environment';
 import { auth } from '@/server/auth';
 import type { User } from '@/types';
-import type { Session } from '@/types';
 import { isOnboarded } from '@/server/system-cache';
 
 const betterAuthHandle: Handle = ({ event, resolve }) => {
@@ -23,8 +22,9 @@ const PUBLIC_PATHS = [
 const BETTER_AUTH_API_PATHS = ['/api/auth/'];
 
 const authGuard: Handle = async ({ event, resolve }) => {
-	const user = event.locals.user as User;
-	const session = event.locals.session as Session;
+	const session = await auth.api.getSession({ headers: event.request.headers });
+	event.locals.user = (session?.user ?? null) as User | null;
+	event.locals.session = session?.session ?? null;
 
 	const pathname = event.url.pathname;
 
@@ -35,13 +35,9 @@ const authGuard: Handle = async ({ event, resolve }) => {
 	const isOnboarding = pathname.startsWith('/onboarding/');
 	const isPublic = PUBLIC_PATHS.some((path) => pathname.startsWith(path));
 
-	if (!session && !isPublic) {
-		throw redirect(303, '/login/');
-	}
+	const isOnboardedValue = await isOnboarded();
 
 	if (session) {
-		const isOnboardedValue = await isOnboarded();
-
 		if (!isOnboardedValue && !isOnboarding) {
 			throw redirect(303, '/onboarding/');
 		}
@@ -51,6 +47,10 @@ const authGuard: Handle = async ({ event, resolve }) => {
 		if (isPublic) {
 			throw redirect(303, '/');
 		}
+	}
+
+	if (!session && !isPublic && !isOnboarding) {
+		throw redirect(303, '/login/');
 	}
 
 	return resolve(event);

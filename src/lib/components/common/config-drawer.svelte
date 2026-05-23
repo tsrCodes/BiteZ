@@ -6,11 +6,19 @@
 	import { Button } from '@/components/ui/button';
 	import * as Sheet from '@/components/ui/sheet';
 	import { useSidebar } from '@/components/ui/sidebar';
-	import { getLayout, type Collapsible, type Variant } from '@/contexts/layout.svelte';
+	import {
+		getLayout,
+		type Collapsible,
+		type Variant,
+		type ContentLayout,
+		type NavbarStyle
+	} from '@/contexts/layout.svelte';
 	import { getTheme } from '@/contexts/theme.svelte';
 	import { presets } from '@/themes/preset-data';
 	import PresetSwatch from './preset-swatch.svelte';
 	import { tooltip } from '@/attachments/tooltip';
+	import * as Select from '@/components/ui/select';
+	import * as ToggleGroup from '@/components/ui/toggle-group';
 
 	const layout = getLayout();
 	const theme = getTheme();
@@ -24,7 +32,7 @@
 		theme.reset();
 	}
 
-	const themeOptions: { value: 'system' | 'light' | 'dark'; label: string }[] = [
+	const themeOptions = [
 		{ value: 'light', label: 'Light' },
 		{ value: 'dark', label: 'Dark' },
 		{ value: 'system', label: 'System' }
@@ -36,20 +44,40 @@
 		{ value: 'sidebar', label: 'Sidebar' }
 	];
 
-	const layoutOptions: { value: string; label: string }[] = [
-		{ value: 'default', label: 'Default' },
-		{ value: 'icon', label: 'Compact' },
-		{ value: 'offcanvas', label: 'Full layout' }
+	const collapsibleOptions: { value: Collapsible; label: string }[] = [
+		{ value: 'icon', label: 'Icon' },
+		{ value: 'offcanvas', label: 'OffCanvas' }
 	];
 
-	let layoutRadioState = $derived(sidebar.open ? 'default' : layout.collapsible);
+	const contentLayoutOptions: { value: ContentLayout; label: string }[] = [
+		{ value: 'centered', label: 'Centered' },
+		{ value: 'full-width', label: 'Full Width' }
+	];
 
-	function handleLayoutChange(value: string) {
+	const navbarStyleOptions: { value: NavbarStyle; label: string }[] = [
+		{ value: 'sticky', label: 'Sticky' },
+		{ value: 'scroll', label: 'Scroll' }
+	];
+
+	const fontOptions = [
+		{ key: 'inter', label: 'Inter' },
+		{ key: 'manrope', label: 'Manrope' },
+		{ key: 'system', label: 'System' }
+	];
+
+	let layoutMode = $derived(
+		sidebar.open ? 'default' : layout.collapsible === 'icon' ? 'compact' : 'full'
+	);
+
+	function handleLayoutModeChange(value: string) {
 		if (value === 'default') {
 			sidebar.setOpen(true);
-		} else {
+		} else if (value === 'compact') {
 			sidebar.setOpen(false);
-			layout.setCollapsible(value as Collapsible);
+			layout.setCollapsible('icon');
+		} else if (value === 'full') {
+			sidebar.setOpen(false);
+			layout.setCollapsible('offcanvas');
 		}
 	}
 </script>
@@ -291,7 +319,7 @@
 				class="fill-muted/50 stroke-border"
 				stroke-width="0.5"
 			/>
-		{:else if mode === 'icon'}
+		{:else if mode === 'compact'}
 			<rect width="100" height="70" class="fill-background" />
 			<rect
 				x="0"
@@ -362,106 +390,7 @@
 			</Sheet.Description>
 		</Sheet.Header>
 		<div class="space-y-6 overflow-y-auto px-4">
-			<!-- Theme Mode -->
-			<div>
-				<div class="mb-2 text-sm font-semibold text-muted-foreground">Theme</div>
-				<div class="grid w-full max-w-md grid-cols-3 gap-4">
-					{#each themeOptions as option (option.value)}
-						{@const isSelected = theme.mode === option.value}
-						<button
-							type="button"
-							class="group text-start transition duration-200 ease-in outline-none"
-							aria-label={`Select ${option.value} theme`}
-							onclick={() => theme.setMode(option.value)}
-						>
-							<div
-								class={cn(
-									'relative overflow-hidden rounded-md ring-1 ring-border',
-									isSelected && 'shadow-2xl ring-primary'
-								)}
-							>
-								{#if isSelected}
-									<CircleCheck
-										class="absolute -top-0.5 -right-0.5 z-10 size-5 fill-primary stroke-primary-foreground"
-									/>
-								{/if}
-								{#if option.value === 'light'}
-									{@render themePreviewLight()}
-								{:else if option.value === 'dark'}
-									{@render themePreviewDark()}
-								{:else}
-									{@render themePreviewSystem()}
-								{/if}
-							</div>
-							<div class="mt-1 text-xs">{option.label}</div>
-						</button>
-					{/each}
-				</div>
-			</div>
-
-			<!-- Sidebar Variant -->
-			<div class="max-md:hidden">
-				<div class="mb-2 text-sm font-semibold text-muted-foreground">Sidebar</div>
-				<div class="grid w-full max-w-md grid-cols-3 gap-4">
-					{#each variantOptions as option (option.value)}
-						{@const isSelected = layout.variant === option.value}
-						<button
-							type="button"
-							class="group text-start transition duration-200 ease-in outline-none"
-							aria-label={`Select ${option.value} sidebar`}
-							onclick={() => layout.setVariant(option.value)}
-						>
-							<div
-								class={cn(
-									'relative overflow-hidden rounded-md ring-1 ring-border',
-									isSelected && 'shadow-2xl ring-primary'
-								)}
-							>
-								{#if isSelected}
-									<CircleCheck
-										class="absolute -top-0.5 -right-0.5 z-10 size-5 fill-primary stroke-primary-foreground"
-									/>
-								{/if}
-								{@render sidebarPreview(option.value)}
-							</div>
-							<div class="mt-1 text-xs">{option.label}</div>
-						</button>
-					{/each}
-				</div>
-			</div>
-
-			<!-- Layout Mode -->
-			<div class="max-md:hidden">
-				<div class="mb-2 text-sm font-semibold text-muted-foreground">Layout</div>
-				<div class="grid w-full max-w-md grid-cols-3 gap-4">
-					{#each layoutOptions as option (option.value)}
-						{@const isSelected = layoutRadioState === option.value}
-						<button
-							type="button"
-							class="group text-start transition duration-200 ease-in outline-none"
-							aria-label={`Select ${option.value} layout`}
-							onclick={() => handleLayoutChange(option.value)}
-						>
-							<div
-								class={cn(
-									'relative overflow-hidden rounded-md ring-1 ring-border',
-									isSelected && 'shadow-2xl ring-primary'
-								)}
-							>
-								{#if isSelected}
-									<CircleCheck
-										class="absolute -top-0.5 -right-0.5 z-10 size-5 fill-primary stroke-primary-foreground"
-									/>
-								{/if}
-								{@render layoutPreview(option.value)}
-							</div>
-							<div class="mt-1 text-xs">{option.label}</div>
-						</button>
-					{/each}
-				</div>
-			</div>
-
-			<!-- Color Preset -->
+			<!-- Theme Preset (Color Preset) -->
 			<div>
 				<div class="mb-2 text-sm font-semibold text-muted-foreground">Color Preset</div>
 				<div class="grid grid-cols-3 gap-2 sm:grid-cols-4">
@@ -473,6 +402,127 @@
 						/>
 					{/each}
 				</div>
+			</div>
+
+			<!-- Fonts -->
+			<div>
+				<div class="mb-2 text-sm font-semibold text-muted-foreground">Fonts</div>
+				<Select.Root type="single" value={theme.font} onValueChange={(v) => theme.setFont(v)}>
+					<Select.Trigger class="w-full">
+						<Select.Label placeholder="Select font" />
+					</Select.Trigger>
+					<Select.Content>
+						{#each fontOptions as font (font.key)}
+							<Select.Item value={font.key}>{font.label}</Select.Item>
+						{/each}
+					</Select.Content>
+				</Select.Root>
+			</div>
+
+			<!-- Theme Mode -->
+			<div>
+				<div class="mb-2 text-sm font-semibold text-muted-foreground">Theme Mode</div>
+				<ToggleGroup.Root
+					type="single"
+					value={theme.mode}
+					onValueChange={(v) => v && theme.setMode(v)}
+					variant="outline"
+					class="w-full"
+				>
+					{#each themeOptions as option (option.value)}
+						<ToggleGroup.Item value={option.value} class="flex-1">
+							{option.label}
+						</ToggleGroup.Item>
+					{/each}
+				</ToggleGroup.Root>
+			</div>
+
+			<!-- Page Layout -->
+			<div>
+				<div class="mb-2 text-sm font-semibold text-muted-foreground">Page Layout</div>
+				<ToggleGroup.Root
+					type="single"
+					value={layout.contentLayout ?? 'centered'}
+					onValueChange={(v) => v && layout.setContentLayout?.(v)}
+					variant="outline"
+					class="w-full"
+				>
+					{#each contentLayoutOptions as option (option.value)}
+						<ToggleGroup.Item value={option.value} class="flex-1">
+							{option.label}
+						</ToggleGroup.Item>
+					{/each}
+				</ToggleGroup.Root>
+			</div>
+
+			<!-- Navbar Behavior -->
+			<div>
+				<div class="mb-2 text-sm font-semibold text-muted-foreground">Navbar Behavior</div>
+				<ToggleGroup.Root
+					type="single"
+					value={layout.navbarStyle ?? 'sticky'}
+					onValueChange={(v) => v && layout.setNavbarStyle?.(v)}
+					variant="outline"
+					class="w-full"
+				>
+					{#each navbarStyleOptions as option (option.value)}
+						<ToggleGroup.Item value={option.value} class="flex-1">
+							{option.label}
+						</ToggleGroup.Item>
+					{/each}
+				</ToggleGroup.Root>
+			</div>
+
+			<!-- Sidebar Style -->
+			<div class="max-md:hidden">
+				<div class="mb-2 text-sm font-semibold text-muted-foreground">Sidebar Style</div>
+				<ToggleGroup.Root
+					type="single"
+					value={layout.variant}
+					onValueChange={(v) => v && layout.setVariant(v)}
+					variant="outline"
+					class="w-full"
+				>
+					{#each variantOptions as option (option.value)}
+						<ToggleGroup.Item value={option.value} class="flex-1">
+							{option.label}
+						</ToggleGroup.Item>
+					{/each}
+				</ToggleGroup.Root>
+			</div>
+
+			<!-- Sidebar Collapse Mode -->
+			<div class="max-md:hidden">
+				<div class="mb-2 text-sm font-semibold text-muted-foreground">Sidebar Collapse Mode</div>
+				<ToggleGroup.Root
+					type="single"
+					value={layout.collapsible}
+					onValueChange={(v) => v && layout.setCollapsible(v)}
+					variant="outline"
+					class="w-full"
+				>
+					{#each collapsibleOptions as option (option.value)}
+						<ToggleGroup.Item value={option.value} class="flex-1">
+							{option.label}
+						</ToggleGroup.Item>
+					{/each}
+				</ToggleGroup.Root>
+			</div>
+
+			<!-- Legacy Layout Mode (Default/Compact/Full) -->
+			<div class="max-md:hidden">
+				<div class="mb-2 text-sm font-semibold text-muted-foreground">Layout Mode</div>
+				<ToggleGroup.Root
+					type="single"
+					value={layoutMode}
+					onValueChange={handleLayoutModeChange}
+					variant="outline"
+					class="w-full"
+				>
+					<ToggleGroup.Item value="default" class="flex-1">Default</ToggleGroup.Item>
+					<ToggleGroup.Item value="compact" class="flex-1">Compact</ToggleGroup.Item>
+					<ToggleGroup.Item value="full" class="flex-1">Full Layout</ToggleGroup.Item>
+				</ToggleGroup.Root>
 			</div>
 		</div>
 		<Sheet.Footer class="gap-2">

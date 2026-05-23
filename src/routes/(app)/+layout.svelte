@@ -6,39 +6,34 @@
 	import SkipToMain from '@/layouts/skip-to-main.svelte';
 	import ScrollToTop from '@/components/common/scroll-to-top.svelte';
 	import { getLayout } from '@/contexts/layout.svelte';
-	import { setAppData, type AppData } from '@/contexts/app.svelte';
+	import { setAppData } from '@/contexts/app.svelte';
 	import { cn } from '@/utils';
 	import AppHeader from '@/layouts/app-header.svelte';
 	import type { LayoutProps } from './$types';
-	import { setBranch, type BranchContext } from '@/contexts/branch.svelte';
+	import { setBranch } from '@/contexts/branch.svelte';
 	import { COOKIE } from '@/utils/config';
 
 	let { data, children }: LayoutProps = $props();
 
-	const branch: BranchContext = $state({ branches: [], activeBranch: null });
+	const activeBranch = $derived(
+		data.branches.find((b) => b.id === data.activeBranchId) ?? data.branches[0]
+	);
+	const branches = $derived(data.branches);
+	const currentUser = $derived(data.currentUser);
 
-	const app: AppData = $state({
-		currentUser: null,
-		branches: [],
-		activeBranch: undefined
+	setBranch({
+		branches,
+		activeBranch
 	});
-
-	setBranch(branch);
-	setAppData(app);
-
-	$effect(() => {
-		branch.branches = data.branches;
-		branch.activeBranch =
-			data.branches.find((b) => b.id === data.activeBranchId) ?? data.branches[0] ?? null;
-
-		app.currentUser = data.currentUser;
-		app.branches = data.branches;
-		app.activeBranch = branch.activeBranch ?? undefined;
+	setAppData({
+		currentUser,
+		branches,
+		activeBranch
 	});
 
 	$effect(() => {
-		if (branch.activeBranch) {
-			document.cookie = `${COOKIE.activeBranch}=${branch.activeBranch.id}; path=/; max-age=${COOKIE.maxAge.long}; SameSite=Lax`;
+		if (activeBranch) {
+			document.cookie = `${COOKIE.activeBranch}=${activeBranch.id}; path=/; max-age=${COOKIE.maxAge.long}; SameSite=Lax`;
 		}
 	});
 
@@ -68,9 +63,11 @@
 
 		<AppHeader />
 
-		<main class="flex-1 px-4 py-2">
+		<div
+			class="h-full w-full p-4 has-data-[content-padding=false]:p-0 md:p-6 md:has-data-[content-padding=false]:p-0"
+		>
 			{@render children()}
-		</main>
+		</div>
 
 		<ScrollToTop />
 	</Sidebar.Inset>

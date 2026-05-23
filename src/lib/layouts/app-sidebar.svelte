@@ -18,7 +18,7 @@
 	const { currentUser } = getAppData();
 </script>
 
-<nav aria-label="Main navigation">
+<nav aria-label="Main navigation" class="border-r">
 	<Sidebar.Root {collapsible} {variant}>
 		<Sidebar.Header>
 			<BranchSwitcher />

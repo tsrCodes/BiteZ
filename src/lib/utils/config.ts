@@ -10,6 +10,9 @@ export const COOKIE = {
 	layoutVariant: 'layout:variant',
 	font: 'font',
 	themePreset: 'theme:preset',
+
+	contentLayout: 'layout:content',
+	navbarStyle: 'layout:navbar',
 	colorMode: 'color:mode',
 	viewApps: 'view:apps',
 	panePrefix: 'pane:',
@@ -23,16 +26,20 @@ export const COOKIE = {
 		themePreset: ['default', 'modern-minimal', 'notebook', 'darkmatter'] as const,
 		collapsible: ['offcanvas', 'icon', 'none'] as const,
 		variant: ['inset', 'sidebar', 'floating'] as const,
-		viewApps: ['grid', 'list'] as const
+		viewApps: ['grid', 'list'] as const,
+		contentLayout: ['centered', 'full-width'] as const,
+		navbarStyle: ['sticky', 'scroll'] as const
 	},
 	defaults: {
 		sidebarOpen: true,
 		collapsible: 'icon' as const,
-		variant: 'inset' as const,
+		variant: 'inset',
 		font: 'inter',
 		themePreset: 'default',
 		colorMode: 'system' as const,
-		viewApps: 'grid' as const
+		viewApps: 'grid' as const,
+		contentLayout: 'centered' as const,
+		navbarStyle: 'sticky' as const
 	},
 	activeBranch: 'active:branch'
 } as const;

@@ -4,6 +4,8 @@ type BaseNavItem = {
 	title: string;
 	badge?: string;
 	icon?: Component;
+	comingSoon?: boolean;
+	newTab?: boolean;
 };
 
 export type NavLink = BaseNavItem & {

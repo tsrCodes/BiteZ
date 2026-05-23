@@ -3,7 +3,7 @@ import type { User } from '@/types';
 import type { Branch } from '@/db/schemas';
 
 export type AppData = {
-	currentUser: User | null;
+	currentUser: User;
 	branches: Branch[];
 	activeBranch?: Branch;
 };
